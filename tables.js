@@ -31,20 +31,20 @@ const client = new DynamoDBClient({ region: 'eu-north-1' });
 // const command = new DescribeTableCommand({ TableName: 'td_todos' });
 
 //CREATE TABLE
-const input = {
-  TableName: 'td_todos_new',
-  AttributeDefinitions: [
-    { AttributeName: 'user_id', AttributeType: 'S' },
-    { AttributeName: 'timestamp', AttributeType: 'N' },
-  ],
-  KeySchema: [
-    //HASH = partition key, RANGE = sort key
-    { AttributeName: 'user_id', KeyType: 'HASH' },
-    { AttributeName: 'timestamp', KeyType: 'RANGE' },
-  ],
-  ProvisionedThroughput: { ReadCapacityUnits: 1, WriteCapacityUnits: 1 },
-};
-const command = new CreateTableCommand(input);
+// const input = {
+//   TableName: 'td_todos_new',
+//   AttributeDefinitions: [
+//     { AttributeName: 'user_id', AttributeType: 'S' },
+//     { AttributeName: 'timestamp', AttributeType: 'N' },
+//   ],
+//   KeySchema: [
+//     //HASH = partition key, RANGE = sort key
+//     { AttributeName: 'user_id', KeyType: 'HASH' },
+//     { AttributeName: 'timestamp', KeyType: 'RANGE' },
+//   ],
+//   ProvisionedThroughput: { ReadCapacityUnits: 1, WriteCapacityUnits: 1 },
+// };
+// const command = new CreateTableCommand(input);
 
 //UPDATE TABLE
 // const input = {
