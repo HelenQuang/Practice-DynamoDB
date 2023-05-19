@@ -10,6 +10,8 @@ import {
   BatchWriteCommand,
   BatchGetCommand,
 } from '@aws-sdk/lib-dynamodb';
+import async from 'async';
+import _ from 'underscore';
 
 const client = new DynamoDBClient({ region: 'eu-north-1' });
 const docClient = DynamoDBDocumentClient.from(client);
@@ -95,19 +97,19 @@ const docClient = DynamoDBDocumentClient.from(client);
 // });
 
 //BATCH GET ITEM
-const command = new BatchGetCommand({
-  RequestItems: {
-    td_todos_new: {
-      Keys: [
-        { user_id: 'user3', timestamp: 3 },
-        { user_id: 'user10', timestamp: 10 },
-      ],
-    },
-    td_todos: {
-      Keys: [{ user_id: 'user2', timestamp: 1684418570 }],
-    },
-  },
-});
+// const command = new BatchGetCommand({
+//   RequestItems: {
+//     td_todos_new: {
+//       Keys: [
+//         { user_id: 'user3', timestamp: 3 },
+//         { user_id: 'user10', timestamp: 10 },
+//       ],
+//     },
+//     td_todos: {
+//       Keys: [{ user_id: 'user2', timestamp: 1684418570 }],
+//     },
+//   },
+// });
 
 //ADD CONDITION FOR THE OPERATION TO OCCUR => Can't create another item with the same attribute name and value
 // const command = new PutCommand({
@@ -132,5 +134,64 @@ const command = new BatchGetCommand({
 //   ExpressionAttributeValues: { ':increase': 1 },
 // });
 
-const response = await docClient.send(command);
-console.log(response);
+//PAGINATE SCAN ITEMS
+// const paginateScan = async () => {
+//   let lastEvaluatedKey = null;
+//   let totalCount = 0;
+
+//   do {
+//     const scanParams = {
+//       TableName: 'td_todos_new',
+//       ExclusiveStartKey: lastEvaluatedKey,
+//     };
+
+//     const command = new ScanCommand(scanParams);
+//     const response = await docClient.send(command);
+//     console.log(response);
+//     // const items = response.Items;
+
+//     // items.forEach((item) => {
+//     //   console.log(item);
+//     // });
+
+//     // lastEvaluatedKey = response.LastEvaluatedKey;
+//     // totalCount += items.length;
+//   } while (lastEvaluatedKey);
+
+//   console.log('Total count: ', totalCount);
+// };
+
+// paginateScan();
+
+// const response = await docClient.send(command);
+// console.log(response);
+
+//PAGINATE QUERY ITEMS
+const paginateQuery = async () => {
+  let lastEvaluatedKey = null;
+  let totalCount = 0;
+
+  do {
+    const queryParams = {
+      TableName: 'td_todos_new',
+      KeyConditionExpression: 'user_id = :uid',
+      ExpressionAttributeValues: { ':uid': 'user3' },
+      ExclusiveStartKey: lastEvaluatedKey,
+    };
+
+    const command = new QueryCommand(queryParams);
+    const response = await client.send(command);
+    const items = response.Items;
+
+    items.forEach((item) => {
+      console.log(item);
+    });
+
+    lastEvaluatedKey = response.LastEvaluatedKey;
+    totalCount += items.length;
+  } while (lastEvaluatedKey);
+
+  console.log('Total Count:', totalCount);
+};
+
+paginateQuery();

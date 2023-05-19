@@ -3,7 +3,9 @@
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.332.0",
     "@aws-sdk/lib-dynamodb": "^3.335.0",
-    "aws-sdk": "^2.1379.0"
+    "async": "^3.2.4",
+    "aws-sdk": "^2.1379.0",
+    "underscore": "^1.13.6"
   },
   "devDependencies": {
     "@types/node": "^20.1.7"
